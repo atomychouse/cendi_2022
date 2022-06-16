@@ -1,0 +1,33 @@
+{% extends 'mainapp/base.html'%}
+{% block section%}
+<div ng-controller="loginCtr">
+    <div class="p-3 border bg-light">
+        <form action="/login" method="post" id="login">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Usuario</label>
+                <input type="text" name="us" ng-model="us" class="form-control" id="formGroupExampleInput" placeholder="">
+              </div>
+              <div class="mb-3">
+                <label for="formGroupExampleInput2" class="form-label">Contraseña</label>
+                <input type="password" name="pass" ng-model="pass" class="form-control" id="formGroupExampleInput2" placeholder="">
+              </div>
+              <input type="submit" style="display: none;">
+              <button type="button" ng-click="login();" id="go">
+              <i class="fas fa-angle-double-right"></i>
+            </button>
+        </form>
+        <div class="alert alert-danger" role="alert" >||err|| </div>
+    </div>
+</div> 
+<script src="/static/mainapp/js/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+jQuery('#login').submit(function(e){
+    e.preventDefault();
+    $('#go').click();
+});
+</script>
+
+
+{%endblock%}

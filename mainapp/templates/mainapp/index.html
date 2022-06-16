@@ -1,0 +1,33 @@
+{% extends 'mainapp/base.html'%}
+{% block section%}
+<div ng-controller="rowsCtr">
+    <div class="row align-items-center row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        <div class="col" ng-repeat="r in rows">
+            <div class="p-3 border bg-light">
+                <div>||r.age|| años</div>
+                <p>(||r.gender||) ||r.name||</p>
+                <i class="fas fa-thermometer"></i>
+                <b>Sintomas</b>
+                <div ng-repeat="s in r.synthoms">
+                   
+                    <span>||s||</span>
+                </div>
+                <div>
+                    <i class="fas fa-map-marker-alt"></i>
+                    
+                </div>
+                <div class="row align-items-right">
+                    <hr>
+                    <div class="col"><i class="fas fa-times-circle"></i></div>
+                    <div class="col"><i class="fas fa-stethoscope"></i></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div> 
+
+
+
+
+{%endblock%}

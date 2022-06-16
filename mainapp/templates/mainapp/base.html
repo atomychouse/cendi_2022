@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.98.0">
+    <title>CENDI-Educación</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
+    <link href="/static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    {% block morestatics %}
+    {% endblock %}
+</head>
+  <body>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="check" viewBox="0 0 16 16">
+    <title>Check</title>
+    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+  </symbol>
+</svg>
+
+<div class="container py-3">
+  <header>
+    <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+        <span class="fs-4">CENDI-EDUCACIÓN</span>
+      </a>
+
+      <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/inscripcion/">Inscripciones</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="/alumnos/">Alumnos</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="#">Pagos</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="#">Dirección</a>
+        <a class="py-2 text-dark text-decoration-none" href="#">Filtro</a>
+      </nav>
+    </div>
+
+    {% block extrahead %}
+    {% endblock %}
+  </header>
+
+  <main>
+    {% block main %}
+    {% endblock %}
+  </main>
+
+  <footer class="pt-4 my-md-5 pt-md-5 border-top">
+    <div class="row">
+      <div class="col-12 col-md">
+        <img class="mb-2" src="/static/cendi.jpeg" alt="" width="90">
+        <small class="d-block mb-3 text-muted">&copy; 2017–2022</small>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Features</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Cool stuff</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Random feature</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team feature</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Stuff for developers</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another one</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Last time</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>Resources</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource name</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another resource</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Final resource</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5>About</h5>
+        <ul class="list-unstyled text-small">
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Locations</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Privacy</a></li>
+          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="/static/mainapp/js/jquery-3.6.0.min.js"></script>
+<script src="/static/mainapp/js/angular.min.js"></script>
+<script src="/static/mainapp/js/angular-route.min.js"></script>
+
+{% block extrajs %}
+{% endblock %}
+
+    
+  </body>
+</html>
