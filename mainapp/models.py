@@ -1,30 +1,29 @@
+from pyexpat import model
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
 # Create your models here.
 
+class School(models.Model):
+    name = models.CharField(default="CENDI J.PIAGET", max_length=250)
+    inicio_curso = models.DateField()
+    fin_curso = models.DateField()
 
-class Profile(models.Model):
-    userid = models.ForeignKey(User, on_delete=models.CASCADE)
-    user_key = models.CharField(max_length=255)
-    adress = models.TextField()
-    contact = models.TextField()
+
+class Week(models.Model):
+    week = models.IntegerField()
+    inicio = models.DateField()
+    fin = models.DateField()
 
 
 class Cuota(models.Model):
+    week = models.ForeignKey(Week, on_delete=None, blank=True, null=True)
     name = models.CharField(max_length=255)
-    date_create = models.DateField(auto_now_add=True)
-    date_pago = models.DateField(blank=True, null=True)
-    precio = models.TextField(blank=True, null=True)
-
-
-class Pago(models.Model):
-    couta_pagar = models.ForeignKey(Cuota, on_delete=models.CASCADE)
-    alumno = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_create = models.DateField(auto_now_add=True)
-
-
+    monto = models.FloatField(blank=True, null=True)
+    recargo = models.FloatField(blank=True, null=True)
+    aplica = models.CharField(max_length=500)
+    obligatorio = models.BooleanField(default=True)
 
 class Alumno(models.Model):
     curp = models.CharField(max_length=255, unique=True)
@@ -32,4 +31,6 @@ class Alumno(models.Model):
     apellidos = models.CharField(max_length=255)
     grado = models.CharField(max_length=100)
     date_create = models.DateField(auto_now_add=True)
-    datos_inscripcion = models.TextField(blank=True, null=True)
+    date_birth = models.DateField()
+
+

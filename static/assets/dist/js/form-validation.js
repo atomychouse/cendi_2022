@@ -25,8 +25,8 @@
           data:data,
           dataType:'json',
           success:function(response){
-            if(response.saved){
-              $('#inscripcion').before('<div>Alumno inscrito con éxito').remove();
+            if(response.callback){
+              window[response.callback](response);
             }
             else{
               alert(response);
@@ -40,3 +40,9 @@
     }, false)
   })
 })()
+
+
+
+function callback_escuela(response){
+  location.reload();
+}

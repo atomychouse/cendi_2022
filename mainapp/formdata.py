@@ -160,6 +160,73 @@ CONTACT_FIELDS = [
 
 ]
 
+CURP_FIELD = [
+    {
+        'name': 'curp',
+        'label': 'Folio del alumno',
+        'size': 12,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    }
+]
+
+CUOTA_FIELDS = [
+    {
+        'name': 'cuota',
+        'label': 'Cuota ',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'monto',
+        'label': 'Monto',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'recargo',
+        'label': 'Recargo',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'aplica',
+        'label': 'Aplica para:',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'select',
+        'extra':'multiple',
+        'options':[
+            ('maternal','Maternal'),
+            ('primero','Primero'),
+            ('segundo','Segundo'),
+            ('tercero','Tercero'),
+
+        ]
+    },
+    {
+        'name': 'obligatorio',
+        'label': 'Es pago obligatorio?',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'select',
+        'options':[
+            ('opcional','Opcional'),
+            ('obligatorio','Obligatorio'),
+        ]
+    },
+
+]
+
 GENERAL_FIELDS = [
     {
         'name': 'colonia',
@@ -295,8 +362,77 @@ GRADOS = [
 
 ]
 
+
+SCHOOL_FIELDS = [
+    {
+        'name': 'nombre_escuela',
+        'label': 'Nombre escuela',
+        'size': 12,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'inicio_curso',
+        'label': 'Inicio curso',
+        'size': 3,
+        'ph': '',
+        'required': 'required',
+        'type': 'input',
+        'class':'datepicker'
+    },
+    {
+        'name': 'fin_curso',
+        'label': 'Fin curso',
+        'size': 3,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+
+]
+
+
+
+MENU_ADMIN = [
+    {
+        'label':'Inscripciones',
+        'link':'/inscripcion/',
+    },
+    {
+        'label':'Alumnos',
+        'link':'/alumnos/',
+    },
+    {
+        'label':'Pagos',
+        'link':'/pagos/',
+    },
+    {
+        'label':'Escuela',
+        'link':'/escuela/',
+    },
+
+]
+MENU_PARENT = [
+    {
+        'label':'Pagos',
+        'link':'/pagos/',
+    },
+    {
+        'label':'Filtros',
+        'link':'/filtros/',
+    },
+]
+
+
+
 DIC_LABELS = {}
 
-for i in [CONTACT_FIELDS, HEALTH_FIELDS, GENERAL_FIELDS, INSCRIPCION_FIELDS]:
+for i in [CONTACT_FIELDS,
+    HEALTH_FIELDS,
+    GENERAL_FIELDS,
+    INSCRIPCION_FIELDS,
+    SCHOOL_FIELDS,
+    CUOTA_FIELDS]:
     for x in i:
         DIC_LABELS[x['name']] = x['label']

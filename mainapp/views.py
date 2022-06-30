@@ -1,3 +1,4 @@
+from genericpath import exists
 from django.forms.models import ModelForm
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
@@ -11,13 +12,21 @@ from mainapp.formdata import (
     GENERAL_FIELDS,
     CONTACT_FIELDS,
     HEALTH_FIELDS,
-    DIC_LABELS
+    SCHOOL_FIELDS,
+    DIC_LABELS,
+    MENU_ADMIN,
+    MENU_PARENT,
+    CURP_FIELD,
+    CUOTA_FIELDS
     )
 from mainapp.models import (
-    Alumno
+    Alumno,
+    School,
+    Cuota,
+    Week
 )
 import simplejson
-
+from datetime import datetime, timedelta
 
 class Empleado(TemplateView):
     
@@ -65,6 +74,37 @@ class Inscripcion(TemplateView):
         context['health'] = HEALTH_FIELDS
 
         return render(request, "mainapp/inscripcion.html", context)
+
+class Home(TemplateView):
+    
+
+    def post(self, request):
+
+        context = {}
+        escuela = self.get_info()
+        context['menu'] = MENU_PARENT
+        context['fields'] = CURP_FIELD
+        context['school'] = escuela
+        a = None
+        data = request.POST.copy()
+        try:
+            a = Alumno.objects.get(curp=data.get('curp'))
+        except:
+            return self.get(request=request)
+        
+        historial = a.historialpago_set.all()
+
+        context['alumno'] = a
+
+        return render(request, "mainapp/home.html", context)
+
+    def get(self, request):
+        context = {}
+        context['menu'] = MENU_PARENT
+        context['fields'] = CURP_FIELD
+        context['school'] = self.get_info()
+        return render(request, "mainapp/home.html", context)
+
 
 class Alumnos(TemplateView):
 
@@ -115,3 +155,39 @@ class Login(TemplateView):
         return render(request, "mainapp/login.html", context)
 
 
+class Escuela(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        inicio = data.get('inicio_curso')
+        inicio_curso = datetime.strptime(inicio, "%d/%m/%Y")
+        fin_curso = datetime.strptime(data.get('fin_curso'), '%d/%m/%Y')
+        weeks = []
+        semana = 1
+        Week.objects.all().delete()
+        while inicio_curso < fin_curso:
+            day_start = inicio_curso.weekday()
+            days = 7
+            rest_days = days - day_start
+            nex_week = inicio_curso + timedelta(days=rest_days-1)
+            week = Week(week=semana, inicio = inicio_curso, fin=nex_week)
+            week.save()
+            
+            inicio_curso = nex_week + timedelta(days=1)
+            semana += 1
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
+
+    def get(self, request):
+        context = {}
+        f = FormCreator()
+        forma_cuota = f.form_to_model(modelo=Cuota, excludes=[])
+        context['status'] = 'inscripcion'
+        context['fields'] = SCHOOL_FIELDS
+        context['menu'] = MENU_ADMIN
+        context['forma_cuota'] = forma_cuota
+        today = datetime.now()
+        context['weeks'] = Week.objects.filter(inicio__gte=today)
+        context['escuela'] = School.objects.first()
+        context['cuota_form'] = CUOTA_FIELDS
+        return render(request, "mainapp/escuela.html", context)

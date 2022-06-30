@@ -30,11 +30,14 @@
       </a>
 
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-        <a class="me-3 py-2 text-dark text-decoration-none" href="/inscripcion/">Inscripciones</a>
-        <a class="me-3 py-2 text-dark text-decoration-none" href="/alumnos/">Alumnos</a>
+        {% for m in menu %}
+        <a class="me-3 py-2 text-dark text-decoration-none" href="{{m.link}}">{{m.label}}</a>
+        {% endfor %}
+        <!-- <a class="me-3 py-2 text-dark text-decoration-none" href="/alumnos/">Alumnos</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="#">Pagos</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="#">Dirección</a>
         <a class="py-2 text-dark text-decoration-none" href="#">Filtro</a>
+        <a class="py-2 text-dark text-decoration-none" href="/escuela/">Escuela</a> -->
       </nav>
     </div>
 
@@ -43,6 +46,9 @@
   </header>
 
   <main>
+    <h4>
+      Semana {{school.1.week}}
+    </h4>
     {% block main %}
     {% endblock %}
   </main>
@@ -90,6 +96,11 @@
 <script src="/static/mainapp/js/angular-route.min.js"></script>
 
 {% block extrajs %}
+<script>
+  $(document).ready(function(){
+    $('.datepicker').datepicker();
+  });
+</script>
 {% endblock %}
 
     

@@ -1,0 +1,21 @@
+<div class="row row-cols-1 row-cols-md-3 mb-3 text-center" style="margin:20px 0px;">
+    {% for w in weeks %}
+    <div class="col">
+      <div class="card mb-4 rounded-3 shadow-sm">
+        <div class="card-header py-3">
+          <h4 class="my-0 fw-normal">
+                <input type="checkbox" name="semana" value="{{w.week}}" class="semana">
+                Semana {{w.week}}
+            </h4>
+        </div>
+        <div class="card-body">
+          <h1 class="card-title pricing-card-title"></h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>{{w.inicio}}</li>
+            <li>{{w.fin}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>

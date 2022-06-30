@@ -1,0 +1,176 @@
+{% extends 'mainapp/base.html'%}
+
+
+{% block morestatics %}
+<link href="/static/assets/dist/css/form-validation.css" rel="stylesheet">
+<style>
+  .bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+
+  .b-example-divider {
+    height: 3rem;
+    background-color: rgba(0, 0, 0, .1);
+    border: solid rgba(0, 0, 0, .15);
+    border-width: 1px 0;
+    box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+  }
+
+  .b-example-vr {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 100vh;
+  }
+
+  .bi {
+    vertical-align: -.125em;
+    fill: currentColor;
+  }
+
+  .nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.75rem;
+    overflow-y: hidden;
+  }
+
+  .nav-scroller .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+
+    <div class="py-5 text-center">
+      <h2>Datos de la escuela </h2>
+    </div>
+
+    <div class="row g-5">
+      <div class="col-md-12 col-lg-12">
+        <form class="needs-validation" novalidate id="inscripcion" method="post" action="/escuela/">
+          {% csrf_token %}
+          <div class="row g-3">
+            {% for f in fields %}
+            <div class="col-sm-{{f.size}}">
+              <label for="firstName" class="form-label">{{f.label}}</label>
+              {% if 'input' in f.type %}
+              <input type="text" class="form-control {{f.class}}"
+                     placeholder="{{f.ph}}" 
+                     value="{{f.preload}}"
+                     name="{{f.name}}" {{f.required}}>
+
+              {% elif 'select' in f.type %}
+                <select name="{{f.name}}" class="form-control" {{f.required}}>
+                  {% for o in f.options %}
+                    <option value="{{o.0}}">{{o.1}}</option>
+                  {% endfor %}
+                </select>
+              {% endif %}
+              <div class="invalid-feedback">
+                Dato requerido
+              </div>
+            </div>
+            {% endfor %}
+            <hr class="my-4">
+            
+          <button style="width:20%;" class="btn btn-primary" type="submit">Guardar</button>
+        </form>
+
+
+
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="py-5 text-center">
+      <h2>Cuotas </h2>
+    </div>
+    <form class="needs-validation" novalidate id="inscripcion" method="post" action="/cuota/">
+      {% csrf_token %}
+      <div class="row g-3">
+        {% for f in cuota_form %}
+        <div class="col-sm-{{f.size}}">
+          <label for="firstName" class="form-label">{{f.label}}</label>
+          {% if 'input' in f.type %}
+          <input type="text" class="form-control {{f.class}}"
+                 placeholder="{{f.ph}}" 
+                 value="{{f.preload}}"
+                 name="{{f.name}}" {{f.required}}>
+          {% elif 'select' in f.type %}
+            <select name="{{f.name}}" class="form-control" {{f.required}} {{f.extra}}>
+              {% for o in f.options %}
+                <option value="{{o.0}}">{{o.1}}</option>
+              {% endfor %}
+            </select>
+          {% endif %}
+          <div class="invalid-feedback">
+            Dato requerido
+          </div>
+        
+        </div>
+        {% endfor %}
+        <div>
+          <input type="checkbox" name="select-all" id="select-all">
+          Seleccionar todas las semanas
+        </div>
+        <button style="width:20%;" class="btn btn-primary" type="submit">Guardar</button>
+
+        <hr class="my-4">
+        <div class="container">
+          {% include "mainapp/weeks.html" %}
+        </div>
+        <button style="width:20%;" class="btn btn-primary" type="submit">Guardar</button>
+
+      </form>
+
+
+    
+ 
+{% endblock %}
+
+
+{% block extrajs %}
+  <script src="/static/assets/dist/js/form-validation.js"></script>
+  <script>
+    $(document).ready(function(){
+
+      $("[name='nombre_escuela']").val('{{escuela.name}}');
+      $("[name='inicio_curso']").val("{{escuela.inicio_curso|date:'d/m/Y'}}");
+      $("[name='fin_curso']").val("{{escuela.fin_curso|date:'d/m/Y'}}");
+
+// Listen for click on toggle checkbox
+$('#select-all').click(function(event) {   
+    if(this.checked) {
+        // Iterate each checkbox
+        $("[name='semana']").each(function() {
+            this.checked = true;                        
+        });
+    } else {
+        $("[name='semana']").each(function() {
+            this.checked = false;                       
+        });
+    }
+}); 
+
+
+
+    });
+  </script>
+{% endblock %}

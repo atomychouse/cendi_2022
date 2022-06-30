@@ -7,29 +7,31 @@ from .views import (
     Inscripcion,
     Empleado,
     Alumnos,
+    Escuela,
+    Home,
 )
 urlpatterns = [
-    # path(
-    #     "login",
-    #     Login.as_view(),
-    #     name="login",
-    # ),
     path(
         "inscripcion/",
         Inscripcion.as_view(),
         name="inscripcion",
     ),
     path(
+        "escuela/",
+        Escuela.as_view(),
+        name="escuela",
+    ),
+    path(
         "alumnos/",
         Alumnos.as_view(),
         name="alumnos",
     ),
-
     path(
         "",
-        Empleado.as_view(),
-        name="alumno",
+        Home.as_view(),
+        name="home",
     ),    
+
 
 ]
 
