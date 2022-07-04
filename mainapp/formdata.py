@@ -220,8 +220,8 @@ CUOTA_FIELDS = [
         'required': 'required',
         'type': 'select',
         'options':[
-            ('opcional','Opcional'),
-            ('obligatorio','Obligatorio'),
+            ('False','Opcional'),
+            ('True','Obligatorio'),
         ]
     },
 
@@ -296,8 +296,16 @@ INSCRIPCION_FIELDS = [
         'type': 'input'
     },
     {
-        'name': 'datebird',
+        'name': 'date_birth',
         'label': 'Fecha de Nacimeinto',
+        'size': 6,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'date_create',
+        'label': 'Fecha de Inscripcion',
         'size': 6,
         'ph': '',
         'required': 'required',
@@ -323,14 +331,6 @@ INSCRIPCION_FIELDS = [
     {
         'name': 'medida',
         'label': 'Medida',
-        'size': 3,
-        'ph': '',
-        'required': 'required',
-        'type': 'input'
-    },
-    {
-        'name': 'tiposangre',
-        'label': 'Tipo de sangre',
         'size': 3,
         'ph': '',
         'required': 'required',
@@ -392,6 +392,20 @@ SCHOOL_FIELDS = [
 
 ]
 
+
+PRODUCT = [
+    {
+        'name':'pantalon uniforme gris t 2/5',
+        'monto':125,
+        'imagen':'',
+    },
+    {
+        'name':'sweter uniforme gris t 2/5',
+        'monto':115,
+        'imagen':'',
+    }
+
+]
 
 
 MENU_ADMIN = [

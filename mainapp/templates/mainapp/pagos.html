@@ -1,18 +1,73 @@
+<div id="mi-ticket" style="position: fixed;right:10px;bottom:0px;z-index:1000;background-color:#eeeeee;width: 40%;padding:50px;">
+  <ul>
+    <li>Mi ticket </li>
+    <li ng-repeat="p in pagos_seleccionados" >||p||</li>
+  </ul>
+</div>
+
+
 <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-    {% for p in pagos %}
+  {% for p in pagos %}
     <div class="col">
       <div class="card mb-4 rounded-3 shadow-sm">
         <div class="card-header py-3">
           <h4 class="my-0 fw-normal">Semana {{p.week}}</h4>
+          del {{p.inicio}} al {{p.fin}}
         </div>
-        <div class="card-body">
-          <h1 class="card-title pricing-card-title">${{p.recargo}}</h1>
+        <div class="card-body" style="text-align: left !important;">
           <ul class="list-unstyled mt-3 mb-4">
-            <li>{{p.recargo}}</li>
+            {% for c in p.cuotas %}
+            <li>
+              <input 
+                    id="c_{{c.id}}"
+                    type="checkbox" 
+                     name="cuota" 
+                     value="{{c.id}}" 
+                     quota="{{c.nuevomonto}}" 
+                     ng-click="addPago('{{c.id}}', '{{c.name}} semana {{c.week.week}}','{{c.nuevomonto}}','{{recargos}}')">
+              <label>{{c.name}}</label>
+              {% if c.nuevomonto > c.monto %}
+                <b>${{c.nuevomonto}}</b>
+                <b style="text-decoration: line-through;">${{c.monto}}</b>
+                <br>
+                <i><sub>Este pago presenta retardos y se agrega un monto de {{c.recargo}} semanal</sub></i>
+                <br>
+              {% else %}
+              ${{c.nuevomonto}} 
+              {% endif %}
+              <br>
+            </li>
+            {% endfor %}
           </ul>
-          <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button>
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
+
+  <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+    {% for p in product %}
+      <div class="col">
+        <div class="card mb-4 rounded-3 shadow-sm">
+          <div class="card-header py-3">
+            <h4 class="my-0 fw-normal">{{p.name}}</h4>
+          </div>
+          <div class="card-body" style="text-align: left !important;">
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>
+                <input 
+                id="c_{{c.id}}"
+                type="checkbox" 
+                 name="producto" 
+                 value="{{c.id}}" 
+                 ng-click="addPago('{{p.id}}', '{{p.name}} ','{{p.monto}}')">
+
+              </li>
+              {{p.monto}}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  

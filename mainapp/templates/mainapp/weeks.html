@@ -6,13 +6,17 @@
           <h4 class="my-0 fw-normal">
                 <input type="checkbox" name="semana" value="{{w.week}}" class="semana">
                 Semana {{w.week}}
+                <br>
+
             </h4>
+            {{w.inicio}} - {{w.fin}} - {{w.status}}
         </div>
         <div class="card-body">
           <h1 class="card-title pricing-card-title"></h1>
           <ul class="list-unstyled mt-3 mb-4">
-            <li>{{w.inicio}}</li>
-            <li>{{w.fin}}</li>
+            {% for c in   w.cuota_set.all%}  
+            <li>{{c.name}} {{c.monto}}</li>
+            {% endfor %}
           </ul>
         </div>
       </div>

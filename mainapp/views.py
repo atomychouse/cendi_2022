@@ -1,5 +1,6 @@
 from genericpath import exists
 from django.forms.models import ModelForm
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.contrib.auth import authenticate, login, logout
@@ -17,7 +18,8 @@ from mainapp.formdata import (
     MENU_ADMIN,
     MENU_PARENT,
     CURP_FIELD,
-    CUOTA_FIELDS
+    CUOTA_FIELDS,
+    PRODUCT
     )
 from mainapp.models import (
     Alumno,
@@ -26,7 +28,38 @@ from mainapp.models import (
     Week
 )
 import simplejson
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+
+
+
+
+class WeekOperations:
+
+    def curr_week(self):
+        today = datetime.now()
+        cur_week = Week.objects.filter(inicio__lte=today,
+            status=True,
+            fin__gte=today).first()
+        return cur_week
+
+    def get_week(self, dateto = None):
+        cur_week = Week.objects.filter(inicio__lte=dateto,
+            status=True,
+            fin__gte=dateto).first()
+        return cur_week
+
+
+class CuotaOperations:
+    
+    def generate_inscription(self,aplica):
+        cuota = {
+            'monto':1200,
+            'prontopago':1200,
+            'recargo':120,
+            'aplica':aplica,
+            'obligatorio':True,
+        }
+        return True        
 
 class Empleado(TemplateView):
     
@@ -38,7 +71,7 @@ class Empleado(TemplateView):
         return render(request, "mainapp/empleado.html", context)
 
 
-class Inscripcion(TemplateView):
+class Inscripcion(TemplateView, WeekOperations):
 
     def post(self, request):
         data = request.POST.copy()
@@ -56,11 +89,24 @@ class Inscripcion(TemplateView):
                 'curp':data.get('curp'),
                 'apellidos':data.get('apellidos'),
                 'grado':data.get('grado'),
-                'datos_inscripcion': full_data
+                'datos_inscripcion': full_data,
+                'date_create':datetime.strptime(data.get('date_create',datetime.now()), '%d/%m/%Y'),
+                'date_birth':datetime.strptime(data.get('date_birth'),'%d/%m/%Y'),
                 }
             alumno = Alumno(**datos)
             alumno.save()
             saved = {'saved':'saved'}
+            cuota = {
+                'name':'inscripcion',
+                'monto':1200,
+                'pronto_pago':1200,
+                'recargo':120,
+                'aplica':alumno.id,
+                'obligatorio':True,
+            }
+            c = Cuota(**cuota)
+            c.week = self.get_week(alumno.date_create)
+            c.save()
         else:
             saved = forma.errors.as_json()
         return JsonResponse(saved, safe=False)
@@ -71,38 +117,61 @@ class Inscripcion(TemplateView):
         context['fields'] = INSCRIPCION_FIELDS
         context['general'] = GENERAL_FIELDS
         context['contact'] = CONTACT_FIELDS
-        context['health'] = HEALTH_FIELDS
+        #context['health'] = HEALTH_FIELDS
 
         return render(request, "mainapp/inscripcion.html", context)
 
 class Home(TemplateView):
-    
+
+    def recargos(self,cuotas,today):
+        for c in cuotas:
+            semanas_retraso = (today - c.week.fin).days  // 7
+            c.nuevomonto = c.recargo*semanas_retraso + c.monto
+            c.semanas_reatrdo = semanas_retraso
+            c.recargos = c.recargo*semanas_retraso
+            c.original = c.monto
+        return cuotas
 
     def post(self, request):
 
         context = {}
-        escuela = self.get_info()
         context['menu'] = MENU_PARENT
-        context['fields'] = CURP_FIELD
-        context['school'] = escuela
+        context['fields'] = None
         a = None
         data = request.POST.copy()
         try:
             a = Alumno.objects.get(curp=data.get('curp'))
-        except:
-            return self.get(request=request)
-        
-        historial = a.historialpago_set.all()
 
-        context['alumno'] = a
+        except Exception as err:
+            pass            
+        if a:
+            today = date.today() + timedelta(days=7)
+            to_now = a.date_create - timedelta(days=7)
+            weeks = Week.objects.filter(Q(status=True),Q(fin__lte=today)&Q(inicio__gte=to_now)).order_by('-fin')
+            weeksarr = [{
+                'id':w.id,
+                'week':w.week,
+                'inicio':w.inicio,
+                'fin':w.fin,
+                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id)), today)
+            } for w in weeks]
+            
+            context['pagos'] = weeksarr
+            context['alumno'] = a
+            hoy = datetime.now()
+            context['week']=Week.objects.filter(status=True,
+                inicio__lte=hoy,
+                fin__gte=hoy).first()
+            context['product'] = PRODUCT
+            return render(request, "mainapp/home.html", context)
 
-        return render(request, "mainapp/home.html", context)
-
+        return self.get(request=request)
     def get(self, request):
         context = {}
         context['menu'] = MENU_PARENT
         context['fields'] = CURP_FIELD
-        context['school'] = self.get_info()
+        today = datetime.now()
+        context['week'] = Week.objects.filter(inicio__lte=today,status=True,fin__gte=today).first()
         return render(request, "mainapp/home.html", context)
 
 
@@ -165,7 +234,7 @@ class Escuela(TemplateView):
         fin_curso = datetime.strptime(data.get('fin_curso'), '%d/%m/%Y')
         weeks = []
         semana = 1
-        Week.objects.all().delete()
+        Week.objects.all().update(status=False, week=0)
         while inicio_curso < fin_curso:
             day_start = inicio_curso.weekday()
             days = 7
@@ -187,7 +256,44 @@ class Escuela(TemplateView):
         context['menu'] = MENU_ADMIN
         context['forma_cuota'] = forma_cuota
         today = datetime.now()
-        context['weeks'] = Week.objects.filter(inicio__gte=today)
+        context['weeks'] = Week.objects.filter(status=True)
         context['escuela'] = School.objects.first()
         context['cuota_form'] = CUOTA_FIELDS
         return render(request, "mainapp/escuela.html", context)
+
+
+
+
+class AddCuota(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        semanas = data.getlist('semana')
+        for s in semanas:
+            cuota = Cuota(
+                week=Week.objects.get(week=s),
+                name=data.get('cuota'),
+                monto=data.get('monto'),
+                recargo=data.get('recargo'),
+                aplica=data.getlist('aplica'),
+                obligatorio=data.get('obligatorio')
+            )
+            cuota.save()
+
+        return JsonResponse({'callbacks':'callback_escuela'}, safe=False)
+
+
+class Pago(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
+
+    def get(self, request):
+        context = {}
+        today = datetime.now()
+        context['weeks'] = Week.objects.filter(status=True, inicio__get=today,fin__lte=today)
+        return render(request, "mainapp/pagos.html", context)
+

@@ -15,7 +15,7 @@
       else{
         event.preventDefault()
         event.stopPropagation()
-        var forma = $('#inscripcion');
+        var forma = $(form);
         var data = forma.serializeArray();
         var uri = forma.attr('action');
         

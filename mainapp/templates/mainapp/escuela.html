@@ -102,7 +102,7 @@
     <div class="py-5 text-center">
       <h2>Cuotas </h2>
     </div>
-    <form class="needs-validation" novalidate id="inscripcion" method="post" action="/cuota/">
+    <form class="needs-validation" novalidate id="cuotas_form" method="post" action="/cuota/">
       {% csrf_token %}
       <div class="row g-3">
         {% for f in cuota_form %}

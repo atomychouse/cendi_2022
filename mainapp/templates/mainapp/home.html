@@ -7,13 +7,17 @@
 {% endblock %}
 
 {% block main %}
-
+<div ng-controller="pagoCtr">
     <div class="py-5 text-center">
-      <h2>Hola, Bienvenido</h2>
+      <h2>Hola, Bienvenido </h2>
       <p class="lead">
           {{alumno.nombre}} {{alumno.apellidos}}
+          <br>
+          {{alumno.grado}}
       </p>
     </div>
+    <h4 style="text-align: center;">Semana {{week.week}} {{week.inicio}} al {{week.fin}}</h4>
+    <hr class="my-4">
 
     <div class="row g-5">
       <div class="col-md-12 col-lg-12">
@@ -50,10 +54,27 @@
         {% endif %}
       </div>
     </div>
-
+</div>
 {% endblock %}
 
 
 {% block extrajs %}
-  <script src="/static/assets/dist/js/bootstrap.bundle.min.js.map"></script>
+  <script type="text/javascript">
+    var myapp = angular.module('mainApp',['ngRoute']);
+    var customInterpolationApp = angular.module('customInterpolationApp', []);
+    myapp.config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol('||');
+        $interpolateProvider.endSymbol('||');
+
+    });
+    myapp.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';        
+    }]);
+
+</script>
+
+
+  <script src="/static/mainapp/js/home.js"></script>
 {% endblock %}
