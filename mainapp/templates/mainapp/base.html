@@ -11,6 +11,67 @@
     <link href="/static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     {% block morestatics %}
+    <style>
+      * {
+          font-size: 12px;
+          font-family: 'Times New Roman';
+      }
+      
+      td,
+      th,
+      tr,
+      table {
+          border-top: 1px solid black;
+          border-collapse: collapse;
+      }
+      
+      td.description,
+      th.description {
+          width: 75px;
+          max-width: 75px;
+      }
+      
+      td.quantity,
+      th.quantity {
+          width: 40px;
+          max-width: 40px;
+          word-break: break-all;
+      }
+      
+      td.price,
+      th.price {
+          width: 40px;
+          max-width: 40px;
+          word-break: break-all;
+      }
+      
+      .centered {
+          text-align: center;
+          align-content: center;
+      }
+      
+      .ticket {
+          width: 155px;
+          max-width: 155px;
+          margin: auto;
+          text-align: center;
+      }
+      
+      img {
+          max-width: 90px;
+          width: inherit;
+          margin: auto;
+      }
+      
+      @media print {
+          .hidden-print,
+          .hidden-print * {
+              display: none !important;
+          }
+      }
+          
+      </style>
+
     {% endblock %}
 </head>
   <body>
@@ -23,7 +84,7 @@
 </svg>
 
 <div class="container py-3">
-  <header>
+  <header class="hidden-print">
     <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
       <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
         <span class="fs-4">CENDI-EDUCACIÓN</span>
@@ -50,40 +111,11 @@
     {% endblock %}
   </main>
 
-  <footer class="pt-4 my-md-5 pt-md-5 border-top">
+  <footer class="pt-4 my-md-5 pt-md-5 border-top hidden-print">
     <div class="row">
       <div class="col-12 col-md">
         <img class="mb-2" src="/static/cendi.jpeg" alt="" width="90">
         <small class="d-block mb-3 text-muted">&copy; 2017–2022</small>
-      </div>
-      <div class="col-6 col-md">
-        <h5>Features</h5>
-        <ul class="list-unstyled text-small">
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Cool stuff</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Random feature</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team feature</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Stuff for developers</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another one</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Last time</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md">
-        <h5>Resources</h5>
-        <ul class="list-unstyled text-small">
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Resource name</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Another resource</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Final resource</a></li>
-        </ul>
-      </div>
-      <div class="col-6 col-md">
-        <h5>About</h5>
-        <ul class="list-unstyled text-small">
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Team</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Locations</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Privacy</a></li>
-          <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Terms</a></li>
-        </ul>
       </div>
     </div>
   </footer>

@@ -10,6 +10,8 @@ from .views import (
     Escuela,
     Home,
     AddCuota,
+    Pagos,
+    ShowTicket,
 )
 urlpatterns = [
     path(
@@ -27,11 +29,20 @@ urlpatterns = [
         AddCuota.as_view(),
         name="add_cuota",
     ),
-
     path(
         "alumnos/",
         Alumnos.as_view(),
         name="alumnos",
+    ),
+    path(
+        "pagos/",
+        Pagos.as_view(),
+        name="pagos",
+    ),
+    path(
+        "ticket/<int:ticket>/",
+        ShowTicket.as_view(),
+        name="ticket",
     ),
     path(
         "",

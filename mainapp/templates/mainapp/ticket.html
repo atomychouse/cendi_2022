@@ -1,0 +1,44 @@
+{% extends 'mainapp/base.html'%}
+
+
+
+{% block main %}
+<div class="ticket">
+
+    <div>
+      <div >       
+        <div style="border: 1px solid #eeeeee;padding:20px;">
+            <img class="mb-2" src="/static/cendi.jpeg"> TICKET
+        <hr>
+        <div >
+            <p >
+                {{alumno.nombre}} {{alumno.apellidos}}
+                <br>
+                {{alumno.grado}}
+            </p>
+          </div>
+      
+        Fecha Pago <b>{{ticket.date_pago}}</b>
+        <hr >
+        {% for p in pagos %}
+            <div>
+                <p>{{p.cuota.name}}</p>
+                Pagaste: <b>${{p.total_pagado}}</b><br>
+                Monto: ${{p.monto_original}} <br>
+                Recargos: ${{p.recargos}}
+            </div>
+            <hr>
+        
+        {% endfor %}
+        </div>
+
+
+      </div>
+    </div>
+    <br>
+    <button class="w-50 btn btn-primary btn-lg hidden-print"  type="button" onclick="window.print()">Imprimir</button>
+    <br><br>
+    <a href="/" class="w-50 btn btn-primary btn-lg hidden-print">Finalizar</a>
+</div>
+{% endblock %}
+

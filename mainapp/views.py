@@ -1,37 +1,28 @@
-from genericpath import exists
-from django.forms.models import ModelForm
-from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.views.generic.base import TemplateView
-from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
-from pyrsistent import field
+from datetime import date, datetime, timedelta
+
+import simplejson
 from cendi.modelforms import FormCreator
-from mainapp.formdata import (
-    GRADOS,
-    INSCRIPCION_FIELDS,
-    GENERAL_FIELDS,
-    CONTACT_FIELDS,
-    HEALTH_FIELDS,
-    SCHOOL_FIELDS,
-    DIC_LABELS,
-    MENU_ADMIN,
-    MENU_PARENT,
-    CURP_FIELD,
-    CUOTA_FIELDS,
-    PRODUCT
-    )
+from django.contrib.auth import authenticate, login, logout
+from django.db.models import Q
+from django.forms.models import ModelForm
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.views.generic.base import TemplateView
+from genericpath import exists
+from pyrsistent import field
+
+from mainapp.formdata import (CONTACT_FIELDS, CUOTA_FIELDS, CURP_FIELD,
+                              DIC_LABELS, GENERAL_FIELDS, GRADOS,
+                              HEALTH_FIELDS, INSCRIPCION_FIELDS, MENU_ADMIN,
+                              MENU_PARENT, PRODUCT, SCHOOL_FIELDS)
 from mainapp.models import (
     Alumno,
-    School,
     Cuota,
-    Week
+    School,
+    Week,
+    Ticket,
+    Pago,
 )
-import simplejson
-from datetime import datetime, timedelta, date
-
-
-
 
 class WeekOperations:
 
@@ -135,7 +126,7 @@ class Home(TemplateView):
     def post(self, request):
 
         context = {}
-        context['menu'] = MENU_PARENT
+        #context['menu'] = MENU_PARENT
         context['fields'] = None
         a = None
         data = request.POST.copy()
@@ -147,13 +138,13 @@ class Home(TemplateView):
         if a:
             today = date.today() + timedelta(days=7)
             to_now = a.date_create - timedelta(days=7)
-            weeks = Week.objects.filter(Q(status=True),Q(fin__lte=today)&Q(inicio__gte=to_now)).order_by('-fin')
+            weeks = Week.objects.filter( Q(status=True),Q(fin__lte=today)&Q(inicio__gte=to_now)).order_by('-fin')
             weeksarr = [{
                 'id':w.id,
                 'week':w.week,
                 'inicio':w.inicio,
                 'fin':w.fin,
-                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id)), today)
+                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id),pago__isnull=True), today)
             } for w in weeks]
             
             context['pagos'] = weeksarr
@@ -173,6 +164,51 @@ class Home(TemplateView):
         today = datetime.now()
         context['week'] = Week.objects.filter(inicio__lte=today,status=True,fin__gte=today).first()
         return render(request, "mainapp/home.html", context)
+
+class Pagos(TemplateView):
+
+    def get(self, request):
+        context = {}
+        self.alumno=alumno
+        self.week=WeekOperations.curr_week(self)
+        self.ticket=ticket
+
+        return render(request, "mainapp/ticket.html", context)
+
+
+    def post(self, request):
+        context = {}
+        today = date.today() + timedelta(days=7)
+        data = request.POST.copy()
+        cuotas = Cuota.objects.filter(id__in=data.getlist('cuota'))
+        cobrando = Home.recargos(self, cuotas=cuotas, today=today)
+        alumno = Alumno.objects.get(id=data.get('alumno'))
+        pagos_arr = []
+        for c in cobrando:
+            pago,fails = Pago.objects.get_or_create(alumno_id=data.get('alumno'), cuota=c)
+            pago.total_pagado=c.nuevomonto
+            pago.monto_original=c.monto
+            pago.recargos=c.recargos
+            pago.save()
+            pagos_arr.append(pago)
+        ticket = Ticket(alumno_id=data.get('alumno'))
+        ticket.save()
+        for pg in pagos_arr:
+            ticket.pago.add(pg)
+        return redirect(f'/ticket/{ticket.id}/')
+
+class ShowTicket(TemplateView):
+    
+    def get(self, request, ticket = None):
+        context = {}
+        ticket_data = Ticket.objects.get(id=ticket) 
+        context['alumno'] = ticket_data.alumno
+        context['week'] = WeekOperations.curr_week(self)
+        context['ticket'] = ticket_data
+        context['pagos'] = ticket_data.pago.all()
+        return render(request, "mainapp/ticket.html", context)
+
+
 
 
 class Alumnos(TemplateView):
@@ -284,7 +320,7 @@ class AddCuota(TemplateView):
         return JsonResponse({'callbacks':'callback_escuela'}, safe=False)
 
 
-class Pago(TemplateView):
+class ListPago(TemplateView):
 
     def post(self, request):
         data = request.POST.copy()

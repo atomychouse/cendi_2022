@@ -41,4 +41,13 @@ class Alumno(models.Model):
 class Pago(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=CASCADE)
     cuota = models.ForeignKey(Cuota, on_delete=CASCADE)
+    total_pagado = models.FloatField(default=0)
+    monto_original = models.FloatField(default=0)
+    recargos = models.FloatField(default=0)
     date_pay = models.DateTimeField(auto_now_add=True)
+
+    
+class Ticket(models.Model):
+    alumno = models.ForeignKey(Alumno, on_delete=CASCADE)
+    pago = models.ManyToManyField(Pago, blank=True, null=True)
+    date_pago = models.DateField(auto_now_add=True)

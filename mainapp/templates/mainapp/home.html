@@ -22,7 +22,11 @@
     <div class="row g-5">
       <div class="col-md-12 col-lg-12">
         {% if pagos %}
-        {% include 'mainapp/pagos.html'%}
+          <form id="pagos" class="needs-validation" novalidate  method="post" action="/pagos/">
+            {% csrf_token %}
+            <input type="hidden" name="alumno" value="{{alumno.id}}">
+            {% include 'mainapp/pagos.html'%}
+          </form>
         {% else %}
         <form class="needs-validation" novalidate  method="post" action="/">
           {% csrf_token %}
