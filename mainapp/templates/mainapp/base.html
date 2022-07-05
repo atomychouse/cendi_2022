@@ -7,8 +7,9 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.98.0">
     <title>CENDI-Educación</title>
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
     <link href="/static/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/assets/dist/css/base.css" rel="stylesheet">
+    <link href="/static/mainapp/css/jquery-ui.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     {% block morestatics %}
     <style>
@@ -120,18 +121,37 @@
     </div>
   </footer>
 </div>
+
+<div class="toaster ">
+  <div class="loader"></div>
+  <div id="msg_toast">MENSAJE</div>
+  <div>
+    <button type="button" class="btn-close cerrar" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
 <script src="/static/mainapp/js/jquery-3.6.0.min.js"></script>
+<script src="/static/mainapp/js/jquery-ui.min.js"></script>
 <script src="/static/mainapp/js/angular.min.js"></script>
+<script src="/static/mainapp/js/angular-sanitize.js"></script>
 <script src="/static/mainapp/js/angular-route.min.js"></script>
 
 {% block extrajs %}
-<script>
-  $(document).ready(function(){
-    $('.datepicker').datepicker();
-  });
-</script>
+
 {% endblock %}
 
+<script>
+
+
+$(document).ready(function(){
+    $('.cerrar').click(function(){
+      $('.toaster').hide();
+    });
+
+
+
+  });
+</script>
     
   </body>
 </html>

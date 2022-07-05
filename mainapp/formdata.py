@@ -301,6 +301,7 @@ INSCRIPCION_FIELDS = [
         'size': 6,
         'ph': '',
         'required': 'required',
+        'class':' datepicker',
         'type': 'input'
     },
     {
@@ -309,7 +310,8 @@ INSCRIPCION_FIELDS = [
         'size': 6,
         'ph': '',
         'required': 'required',
-        'type': 'input'
+        'type': 'input',
+        'class':' datepicker',
     },
     {
         'name': 'gender',
@@ -419,22 +421,22 @@ MENU_ADMIN = [
     },
     {
         'label':'Pagos',
-        'link':'/pagos/',
+        'link':'/',
     },
     {
         'label':'Escuela',
         'link':'/escuela/',
+    },
+    {
+        'label':'Dashboard',
+        'link':'/dashboard/',
     },
 
 ]
 MENU_PARENT = [
     {
         'label':'Pagos',
-        'link':'/pagos/',
-    },
-    {
-        'label':'Filtros',
-        'link':'/filtros/',
+        'link':'/',
     },
 ]
 

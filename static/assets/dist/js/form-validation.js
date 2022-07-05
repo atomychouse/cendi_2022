@@ -46,3 +46,8 @@
 function callback_escuela(response){
   location.reload();
 }
+
+
+function callback_inscripcion(response){
+  $('#inscripcion').after('Alumno inscrito con éxito :) -<br> <a href="/inscripcion/">Volver</a>').remove();
+}

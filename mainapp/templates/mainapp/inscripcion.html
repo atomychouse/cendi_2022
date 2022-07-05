@@ -61,9 +61,6 @@
 
     <div class="py-5 text-center">
       <h2>Inscripción</h2>
-      <p class="lead">Aqui encontraras lso formualrios para inscribir a un alumno,
-        sigue con cuidado las instrucciones.
-      </p>
     </div>
 
     <div class="row g-5">
@@ -76,13 +73,13 @@
             <div class="col-sm-{{f.size}}">
               <label for="firstName" class="form-label">{{f.label}}</label>
               {% if 'input' in f.type %}
-              <input type="text" class="form-control"
+              <input type="text" class="form-control {{f.class}}"
                      placeholder="{{f.ph}}" 
                      value="{{f.preload}}"
                      name="{{f.name}}" {{f.required}}>
 
               {% elif 'select' in f.type %}
-                <select name="{{f.name}}" class="form-control" {{f.required}}>
+                <select name="{{f.name}}" class="form-control {{f.class}}" {{f.required}}>
                   {% for o in f.options %}
                     <option value="{{o.0}}">{{o.1}}</option>
                   {% endfor %}
@@ -99,13 +96,13 @@
             <div class="col-sm-{{f.size}}">
               <label for="firstName" class="form-label">{{f.label}}</label>
               {% if 'input' in f.type %}
-              <input type="text" class="form-control"
+              <input type="text" class="form-control {{f.class}}"
                      placeholder="{{f.ph}}" 
                      value="{{f.preload}}"
                      name="{{f.name}}" {{f.required}}>
 
               {% elif 'select' in f.type %}
-                <select name="{{f.name}}" class="form-control" {{f.required}}>
+                <select name="{{f.name}}" class="form-control {{f.class}}" {{f.required}}>
                   {% for o in f.options %}
                     <option value="{{o.0}}">{{o.1}}</option>
                   {% endfor %}
@@ -122,13 +119,13 @@
             <div class="col-sm-{{f.size}}">
               <label for="firstName" class="form-label">{{f.label}}</label>
               {% if 'input' in f.type %}
-              <input type="text" class="form-control"
+              <input type="text" class="form-control {{f.class}}"
                      placeholder="{{f.ph}}" 
                      value="{{f.preload}}"
                      name="{{f.name}}" {{f.required}}>
 
               {% elif 'select' in f.type %}
-                <select name="{{f.name}}" class="form-control" {{f.required}}>
+                <select name="{{f.name}}" class="form-control {{f.class}}" {{f.required}}>
                   {% for o in f.options %}
                     <option value="{{o.0}}">{{o.1}}</option>
                   {% endfor %}
@@ -140,18 +137,17 @@
             </div>
             {% endfor %}
             <hr class="my-4">
-            <h4>Salud</h4>
             {% for f in health %}
             <div class="col-sm-{{f.size}}">
               <label for="firstName" class="form-label">{{f.label}}</label>
               {% if 'input' in f.type %}
-              <input type="text" class="form-control"
+              <input type="text" class="form-control {{f.class}}"
                      placeholder="{{f.ph}}" 
                      value="{{f.preload}}"
                      name="{{f.name}}" {{f.required}}>
 
               {% elif 'select' in f.type %}
-                <select name="{{f.name}}" class="form-control" {{f.required}}>
+                <select name="{{f.name}}" class="form-control {{f.class}}" {{f.required}}>
                   {% for o in f.options %}
                     <option value="{{o.0}}">{{o.1}}</option>
                   {% endfor %}
@@ -176,4 +172,16 @@
 {% block extrajs %}
   <script src="/static/assets/dist/js/bootstrap.bundle.min.js.map"></script>
   <script src="/static/assets/dist/js/form-validation.js"></script>
+  <script>
+
+$( function() {
+    $( ".datepicker" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      minDate: -10,
+    });
+  } );
+
+
+</script>
 {% endblock %}

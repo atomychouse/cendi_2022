@@ -12,6 +12,8 @@ from .views import (
     AddCuota,
     Pagos,
     ShowTicket,
+    CuotaActions,
+    Dashboard,
 )
 urlpatterns = [
     path(
@@ -44,6 +46,17 @@ urlpatterns = [
         ShowTicket.as_view(),
         name="ticket",
     ),
+    path(
+        "rmcuota/<int:cuota>/",
+        CuotaActions.as_view(),
+        name="rmcuota",
+    ),
+    path(
+        "dashboard/",
+        Dashboard.as_view(),
+        name="rmcuota",
+    ),
+
     path(
         "",
         Home.as_view(),

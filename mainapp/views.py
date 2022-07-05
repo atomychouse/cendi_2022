@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 from genericpath import exists
 from pyrsistent import field
+from django.db.models import Sum,Count
 
 from mainapp.formdata import (CONTACT_FIELDS, CUOTA_FIELDS, CURP_FIELD,
                               DIC_LABELS, GENERAL_FIELDS, GRADOS,
@@ -100,7 +101,7 @@ class Inscripcion(TemplateView, WeekOperations):
             c.save()
         else:
             saved = forma.errors.as_json()
-        return JsonResponse(saved, safe=False)
+        return JsonResponse({'callback':'callback_inscripcion'}, safe=False)
 
     def get(self, request):
         context = {}
@@ -109,6 +110,8 @@ class Inscripcion(TemplateView, WeekOperations):
         context['general'] = GENERAL_FIELDS
         context['contact'] = CONTACT_FIELDS
         #context['health'] = HEALTH_FIELDS
+        context['menu'] = MENU_ADMIN
+
 
         return render(request, "mainapp/inscripcion.html", context)
 
@@ -228,6 +231,8 @@ class Alumnos(TemplateView):
         context['alumnos'] = alumnos
         context['grados'] = grados
         context['grado'] = grado
+        context['menu'] = MENU_ADMIN
+
         return render(request, "mainapp/alumnos.html", context)
 
 
@@ -290,6 +295,7 @@ class Escuela(TemplateView):
         return JsonResponse({'callback':'callback_escuela'}, safe=False)
 
     def get(self, request):
+        configurar = request.GET.get('author')
         context = {}
         f = FormCreator()
         forma_cuota = f.form_to_model(modelo=Cuota, excludes=[])
@@ -298,9 +304,10 @@ class Escuela(TemplateView):
         context['menu'] = MENU_ADMIN
         context['forma_cuota'] = forma_cuota
         today = datetime.now()
-        context['weeks'] = Week.objects.filter(status=True)
+        context['weeks'] = Week.objects.filter(status=True).exclude(cuota__name__contains='inscripcion')
         context['escuela'] = School.objects.first()
         context['cuota_form'] = CUOTA_FIELDS
+        context['author'] =  configurar
         return render(request, "mainapp/escuela.html", context)
 
 
@@ -323,7 +330,7 @@ class AddCuota(TemplateView):
             )
             cuota.save()
 
-        return JsonResponse({'callbacks':'callback_escuela'}, safe=False)
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
 
 
 class ListPago(TemplateView):
@@ -339,3 +346,31 @@ class ListPago(TemplateView):
         context['weeks'] = Week.objects.filter(status=True, inicio__get=today,fin__lte=today)
         return render(request, "mainapp/pagos.html", context)
 
+
+
+class CuotaActions(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
+
+    def get(self, request, cuota=None):
+        context = {}
+        c = Cuota.objects.get(id=cuota).delete()
+        return render(request, "mainapp/pagos.html", context)
+
+
+
+class Dashboard(TemplateView):
+
+
+    def get(self, request, cuota=None):
+        context = {}
+        weeks = Week.objects.filter(status=True)
+        alumnos = Alumno.objects.values('grado').annotate(dcount=Count('grado'))
+        context['weeks'] = weeks
+        context['menu'] = MENU_ADMIN
+        context['alumnos'] = alumnos
+        
+        return render(request, "mainapp/dashboard.html", context)

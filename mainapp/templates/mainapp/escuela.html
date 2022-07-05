@@ -59,6 +59,7 @@
 
 {% block main %}
 
+    {% if 'alberto' in author%}
     <div class="py-5 text-center">
       <h2>Datos de la escuela </h2>
     </div>
@@ -93,11 +94,9 @@
             
           <button style="width:20%;" class="btn btn-primary" type="submit">Guardar</button>
         </form>
-
-
-
       </div>
     </div>
+    {% endif %}
     <hr class="my-4">
     <div class="py-5 text-center">
       <h2>Cuotas </h2>
@@ -136,7 +135,6 @@
         <div class="container">
           {% include "mainapp/weeks.html" %}
         </div>
-        <button style="width:20%;" class="btn btn-primary" type="submit">Guardar</button>
 
       </form>
 
@@ -155,22 +153,43 @@
       $("[name='inicio_curso']").val("{{escuela.inicio_curso|date:'d/m/Y'}}");
       $("[name='fin_curso']").val("{{escuela.fin_curso|date:'d/m/Y'}}");
 
-// Listen for click on toggle checkbox
-$('#select-all').click(function(event) {   
-    if(this.checked) {
-        // Iterate each checkbox
-        $("[name='semana']").each(function() {
-            this.checked = true;                        
-        });
-    } else {
-        $("[name='semana']").each(function() {
-            this.checked = false;                       
-        });
-    }
-}); 
+      // Listen for click on toggle checkbox
+      $('#select-all').click(function(event) {   
+          if(this.checked) {
+              // Iterate each checkbox
+              $("[name='semana']").each(function() {
+                  this.checked = true;                        
+              });
+          } else {
+              $("[name='semana']").each(function() {
+                  this.checked = false;                       
+              });
+          }
+      }); 
 
-
+      $('.remove').click(function(element){
+      element.preventDefault();
+      var id = $(this).attr('data-id');
+      var elemental = $(this);
+      if(confirm('Desea eliminar esta cuota')){
+        $('.toaster,.loader').show();
+        $('#msg_toast').html('Eliminando cuota');
+        $.ajax({
+          url:'/rmcuota/'+id+'/',
+          type:'get',
+          success:function(response){
+            elemental.parents('li:first').remove();
+            $('.loader').hide();
+            $('#msg_toast').html('Se eliminó con éxito :)');
+            $('.toaster').delay(2000).hide('slow');
+          }
+        });
+      }
 
     });
+
+
+
+});
   </script>
 {% endblock %}

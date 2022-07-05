@@ -3,6 +3,7 @@ from tkinter import CASCADE
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -11,12 +12,33 @@ class School(models.Model):
     inicio_curso = models.DateField()
     fin_curso = models.DateField()
 
-
 class Week(models.Model):
     week = models.IntegerField()
     inicio = models.DateField()
     fin = models.DateField()
     status = models.BooleanField(default=True)
+    activa = models.BooleanField(default=True)
+
+    def pago_total(self):
+        cuotas = self.cuota_set.all()
+        pagos = 0.0
+        for c in cuotas:
+            total = c.pago_set.aggregate(Sum('monto_original'))['monto_original__sum']
+            if total:
+                pagos = pagos + total
+            #assert False, c.pago_set.aggregate(Sum('monto_original'))
+        return pagos
+
+
+    def recargo_total(self):
+        cuotas = self.cuota_set.all()
+        pagos = 0.0
+        for c in cuotas:
+            total = c.pago_set.aggregate(Sum('recargos'))['recargos__sum']
+            if total:
+                pagos = pagos + total
+            #assert False, c.pago_set.aggregate(Sum('monto_original'))
+        return pagos
 
 
 class Cuota(models.Model):
