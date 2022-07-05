@@ -116,7 +116,13 @@ class Home(TemplateView):
 
     def recargos(self,cuotas,today):
         for c in cuotas:
-            semanas_retraso = (today - c.week.fin).days  // 7
+            if c.pago_set.all().exists():
+                semanas_retraso = 0
+                c.pagado = True
+            else:
+                semanas_retraso = (today - c.week.fin).days  // 7
+                c.pagado = False
+
             c.nuevomonto = c.recargo*semanas_retraso + c.monto
             c.semanas_reatrdo = semanas_retraso
             c.recargos = c.recargo*semanas_retraso
@@ -144,7 +150,7 @@ class Home(TemplateView):
                 'week':w.week,
                 'inicio':w.inicio,
                 'fin':w.fin,
-                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id),pago__isnull=True), today)
+                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id)), today)
             } for w in weeks]
             
             context['pagos'] = weeksarr
