@@ -21,7 +21,6 @@ class Week(models.Model):
 
     def cuotas_total(self):
         cuotas = self.cuota_set.aggregate(Sum('monto'))
-        print(cuotas)
         return cuotas
 
 
