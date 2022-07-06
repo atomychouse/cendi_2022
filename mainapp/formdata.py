@@ -394,20 +394,50 @@ SCHOOL_FIELDS = [
 
 ]
 
-
-PRODUCT = [
+PRODUCT_FIELDS = [
     {
-        'name':'pantalon uniforme gris t 2/5',
-        'monto':125,
-        'imagen':'',
+        'name': 'product_name',
+        'label': 'Producto',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
     },
     {
-        'name':'sweter uniforme gris t 2/5',
-        'monto':115,
-        'imagen':'',
-    }
+        'name': 'sizes',
+        'label': 'Tallas/Medidas',
+        'size': 4,
+        'ph': '',
+        'required': '',
+        'type': 'input'
+    },
+    {
+        'name': 'price',
+        'label': 'Precio',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'input'
+    },
+    {
+        'name': 'grado',
+        'label': 'Aplica para:',
+        'size': 4,
+        'ph': '',
+        'required': 'required',
+        'type': 'select',
+        'extra':'multiple',
+        'options':[
+            ('maternal','Maternal'),
+            ('primero','Primero'),
+            ('segundo','Segundo'),
+            ('tercero','Tercero'),
+
+        ]
+    },
 
 ]
+
 
 
 MENU_ADMIN = [
@@ -433,6 +463,7 @@ MENU_ADMIN = [
     },
 
 ]
+
 MENU_PARENT = [
     {
         'label':'Pagos',
@@ -444,11 +475,14 @@ MENU_PARENT = [
 
 DIC_LABELS = {}
 
-for i in [CONTACT_FIELDS,
+for i in [
+    CONTACT_FIELDS,
     HEALTH_FIELDS,
     GENERAL_FIELDS,
     INSCRIPCION_FIELDS,
     SCHOOL_FIELDS,
-    CUOTA_FIELDS]:
+    CUOTA_FIELDS, 
+    PRODUCT_FIELDS
+    ]:
     for x in i:
         DIC_LABELS[x['name']] = x['label']

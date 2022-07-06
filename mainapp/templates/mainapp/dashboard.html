@@ -58,13 +58,9 @@
 {% endblock %}
 
 {% block main %}
-    <div id="chart_div" style="width: 900px; height: 500px;"></div> 
-
+    <div id="chart_div" style="width:100%;"></div> 
     <hr>
-
-    <div id="alumnos" style="width: 900px; height: 500px;"></div> 
-
-
+    <div id="piechart_3d" style="width:100%;"></div>
 {% endblock %}
 
 
@@ -86,44 +82,46 @@ $( function() {
 </script>
 
 <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable([
-        ['Col','Montos', 'Recargos'],
-        {% for w in weeks%}
-        ['Sem. {{w.week}}',{{w.pago_total}},{{w.recargo_total}}],
-        {% endfor %}
-      ]);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Weeks', 'Cuotas', 'Pagos','Egresos'],
+      {% for w in weeks %}
+      ['Sem.{{w.week}}',  {{w.cuotas_total.monto__sum}},{{w.pagos_total.total_pagado__sum}},2500],
+      {% endfor %}
+    ]);
 
-      var options = {
-        title: 'Pagos ',
-        vAxis: {title: 'Ingresos Semanal'},
-        isStacked: true
-      };
+    var options = {
+      title: '',
+      hAxis: {title: 'Ciclo Escolar',  titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0}
+    };
 
-      var data_alumnos = google.visualization.arrayToDataTable([
-        ['Col','Alumnos'],
-        {% for a in alumnos %}
-        ['{{a.grado}}',{{a.dcount}}],
-        {% endfor %}
-      ]);
+    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+</script>
+<script type="text/javascript">
+  google.charts.load("current", {packages:["corechart"]});
+  google.charts.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Task', 'Alumnos por grado'],
+      {% for alumno in alumnos %}
+      ['{{alumno.grado}}',{{alumno.dcount}}],
+      {% endfor %}
+    ]);
 
-      var alumnos_options = {
-        title: 'Alumnos',
-        vAxis: {title: 'Alumos'},
-        isStacked: true
-      };
+    var options = {
+      title: '',
+      is3D: true,
+    };
 
-      var chart = new google.visualization.SteppedAreaChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-
-      var chart_alumnos = new google.visualization.SteppedAreaChart(document.getElementById('alumnos'));
-      chart_alumnos.draw(data_alumnos, alumnos_options);
-
-    }
-  </script>
-
+    var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+  }
+</script>
 
 {% endblock %}

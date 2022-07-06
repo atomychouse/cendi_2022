@@ -10,7 +10,12 @@
 <div ng-controller="pagoCtr">
     <div class="py-5 text-center">
       <h2>Hola, Bienvenido </h2>
-      <p class="lead">
+      <div style="display: inline-block;width:10%;vertical-align:top;text-align: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 60%;" fill="currentColor" class="bi bi-person-fill" viewBox="0 0 16 16">
+          <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+        </svg>
+      </div>
+      <p class="lead" style="display: inline-block;text-align: left;">
           {{alumno.nombre}} {{alumno.apellidos}}
           <br>
           {{alumno.grado}}
@@ -21,46 +26,86 @@
     <h4 style="text-align: center;">Semana {{week.week}} <br>{{week.inicio}} al {{week.fin}}</h4>
     <hr class="my-4">
 
-    <div class="row g-5">
-      <div class="col-md-12 col-lg-12">
-        {% if pagos %}
-          <form id="pagos_form" class="needs-validation" novalidate  method="post" action="/pagos/">
-            {% csrf_token %}
-            <input type="hidden" name="alumno" value="{{alumno.id}}">
-            {% include 'mainapp/pagos.html'%}
-          </form>
-        {% else %}
-          <form class="needs-validation" novalidate  method="post" action="/">
-            {% csrf_token %}
-            <div class="row g-3">
-              {% for f in fields %}
-              <div class="col-sm-{{f.size}}">
-                <label for="firstName" class="form-label">{{f.label}}</label>
-                {% if 'input' in f.type %}
-                <input type="text" class="form-control"
-                      placeholder="{{f.ph}}" 
-                      value="{{f.preload}}"
-                      name="{{f.name}}" {{f.required}}>
+    <div class="text-center">
+      <h2>Cuotas </h2>
+      <form class="needs-validation" novalidate  method="post" action="/">
+        {% csrf_token %}
+        <div class="row g-3">
+          {% for f in fields %}
+          <div class="col-sm-{{f.size}}">
+            <label for="firstName" class="form-label">{{f.label}}</label>
+            {% if 'input' in f.type %}
+            <input type="text" class="form-control"
+                  placeholder="{{f.ph}}" 
+                  value="{{f.preload}}"
+                  name="{{f.name}}" {{f.required}}>
 
-                {% elif 'select' in f.type %}
-                  <select name="{{f.name}}" class="form-control" {{f.required}}>
-                    {% for o in f.options %}
-                      <option value="{{o.0}}">{{o.1}}</option>
-                    {% endfor %}
-                  </select>
-                {% endif %}
-                <div class="invalid-feedback">
-                  Dato requerido
-                </div>
-              </div>
-              {% endfor %}
-              <hr class="my-4">
-            <button class="w-50 btn btn-primary btn-lg" type="button">Continue</button>
-          </form>
-        {% endif %}
+            {% elif 'select' in f.type %}
+              <select name="{{f.name}}" class="form-control" {{f.required}}>
+                {% for o in f.options %}
+                  <option value="{{o.0}}">{{o.1}}</option>
+                {% endfor %}
+              </select>
+            {% endif %}
+            <div class="invalid-feedback">
+              Dato requerido
+            </div>
+          </div>
+          {% endfor %}
+        {% if fields %}<button class="w-50 btn btn-primary btn-lg" type="button">Continue</button>{% endif %}
+          </div>
+      </form>      
+    </div>
+
+    {% if pagos %}
+    <hr>
+    <form id="pagos_form" class="needs-validation" novalidate  method="post" action="/pagos/">
+      <div class="row g-5">
+      <div class="col-sm-9 col-md-9">
+        <div class="row g-5">
+          <div class="col-md-12 col-lg-12">
+            
+                {% csrf_token %}
+                <input type="hidden" name="alumno" value="{{alumno.id}}">
+                {% include 'mainapp/pagos.html'%}
+            
+          </div>
+        </div>
+    
+      </div>
+      <div class="col-sm-3 col-md-3">
+        <div class="row">
+        {% for producto in productos %}
+        <div class="col-md-12 col-sm-12 text-center">
+
+          <div class="card">
+            <div class="card-header">
+              {{producto.product_name}}
+            </div>
+            <div class="card-body text-left">
+              <input 
+              id="c_{{p.id}}"
+              type="checkbox" 
+              name="producto" 
+              value="{{producto.id}}" 
+              class="form-check-input"
+              >
+              ${{producto.price}}
+              <hr>
+              {{producto.sizes}}
+            </div>
+          </div>
+
+        </div>
+        <hr>
+        {% endfor %}
+
       </div>
     </div>
 </div>
+</form>
+
+{% endif %}
 {% endblock %}
 
 

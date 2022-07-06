@@ -3,6 +3,8 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 
+from mainapp.models import Producto
+
 from .views import (
     Inscripcion,
     Empleado,
@@ -14,6 +16,8 @@ from .views import (
     ShowTicket,
     CuotaActions,
     Dashboard,
+    AddProducto,
+    ProductoActions,
 )
 urlpatterns = [
     path(
@@ -56,12 +60,22 @@ urlpatterns = [
         Dashboard.as_view(),
         name="rmcuota",
     ),
+    path(
+        "producto/",
+        AddProducto.as_view(),
+        name="producto",
+    ),
 
     path(
         "",
         Home.as_view(),
         name="home",
     ),    
+    path(
+        "rmproducto/<int:id>/",
+        ProductoActions.as_view(),
+        name="rmproduct",
+    ),
 
 
 ]

@@ -22,7 +22,7 @@
         <hr >
         {% for p in pagos %}
             <div>
-                <p>{{p.cuota.name}}</p>
+                <p>{{p.cuota.name}} {{p.producto.product_name}}</p>
                 Pagaste: <b>${{p.total_pagado}}</b><br>
                 Monto: ${{p.monto_original}} <br>
                 Recargos: ${{p.recargos}}

@@ -19,25 +19,17 @@ class Week(models.Model):
     status = models.BooleanField(default=True)
     activa = models.BooleanField(default=True)
 
-    def pago_total(self):
-        cuotas = self.cuota_set.all()
-        pagos = 0.0
-        for c in cuotas:
-            total = c.pago_set.aggregate(Sum('monto_original'))['monto_original__sum']
-            if total:
-                pagos = pagos + total
-            #assert False, c.pago_set.aggregate(Sum('monto_original'))
-        return pagos
+    def cuotas_total(self):
+        cuotas = self.cuota_set.aggregate(Sum('monto'))
+        print(cuotas)
+        return cuotas
 
 
-    def recargo_total(self):
-        cuotas = self.cuota_set.all()
-        pagos = 0.0
-        for c in cuotas:
-            total = c.pago_set.aggregate(Sum('recargos'))['recargos__sum']
-            if total:
-                pagos = pagos + total
-        return pagos
+    def pagos_total(self):
+        pagos = self.pago_set.aggregate(Sum('total_pagado'))
+        if pagos['total_pagado__sum']:
+            return pagos
+        return {'total_pagado__sum': 0.0}
 
 
 class Cuota(models.Model):
@@ -61,10 +53,12 @@ class Alumno(models.Model):
 
 class Pago(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=CASCADE)
-    cuota = models.ForeignKey(Cuota, on_delete=CASCADE)
+    cuota = models.ForeignKey(Cuota, blank=True, null=True, on_delete=CASCADE)
+    producto = models.ForeignKey('Producto', blank=True, null=True, on_delete=CASCADE)
     total_pagado = models.FloatField(default=0)
     monto_original = models.FloatField(default=0)
     recargos = models.FloatField(default=0)
+    week_payment = models.ForeignKey(Week, blank=True, null=True, on_delete=CASCADE)
     date_pay = models.DateTimeField(auto_now_add=True)
 
     
@@ -72,3 +66,11 @@ class Ticket(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=CASCADE)
     pago = models.ManyToManyField(Pago, blank=True, null=True)
     date_pago = models.DateField(auto_now_add=True)
+
+
+class Producto(models.Model):
+    product_name = models.CharField(max_length=500)
+    sizes = models.CharField(max_length=500, default=0)
+    price = models.FloatField()
+    grade = models.CharField(max_length=100)
+

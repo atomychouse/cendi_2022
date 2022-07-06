@@ -15,7 +15,7 @@ from django.db.models import Sum,Count
 from mainapp.formdata import (CONTACT_FIELDS, CUOTA_FIELDS, CURP_FIELD,
                               DIC_LABELS, GENERAL_FIELDS, GRADOS,
                               HEALTH_FIELDS, INSCRIPCION_FIELDS, MENU_ADMIN,
-                              MENU_PARENT, PRODUCT, SCHOOL_FIELDS)
+                              MENU_PARENT, PRODUCT_FIELDS, SCHOOL_FIELDS)
 from mainapp.models import (
     Alumno,
     Cuota,
@@ -23,6 +23,7 @@ from mainapp.models import (
     Week,
     Ticket,
     Pago,
+    Producto,
 )
 
 class WeekOperations:
@@ -166,7 +167,7 @@ class Home(TemplateView):
             context['week']=Week.objects.filter(status=True,
                 inicio__lte=hoy,
                 fin__gte=hoy).first()
-            context['product'] = PRODUCT
+            context['productos'] = Producto.objects.all()
             return render(request, "mainapp/home.html", context)
 
         return self.get(request=request)
@@ -190,14 +191,24 @@ class Pagos(TemplateView):
         today = date.today() + timedelta(days=7)
         data = request.POST.copy()
         cuotas = Cuota.objects.filter(id__in=data.getlist('cuota'))
+        producto = Producto.objects.filter(id__in=data.getlist('producto'))
         alumno = Alumno.objects.get(id=data.get('alumno'))
         cobrando = Home.recargos(self, cuotas=cuotas, today=today, alumno=alumno.id)
         pagos_arr = []
         for c in cobrando:
-            pago,fails = Pago.objects.get_or_create(alumno_id=data.get('alumno'), cuota=c)
+            pago = Pago(alumno_id=data.get('alumno'), cuota=c)
             pago.total_pagado=c.nuevomonto
             pago.monto_original=c.monto
             pago.recargos=c.recargos
+            pago.week_payment = WeekOperations.curr_week(self)
+            pago.save()
+            pagos_arr.append(pago)
+        for p in producto:
+            pago = Pago(alumno_id=data.get('alumno'), producto=p)
+            pago.total_pagado=p.price
+            pago.monto_original=p.price
+            pago.recargos=0.0
+            pago.week_payment = WeekOperations.curr_week(self)
             pago.save()
             pagos_arr.append(pago)
         ticket = Ticket(alumno_id=data.get('alumno'))
@@ -218,10 +229,7 @@ class ShowTicket(TemplateView):
         return render(request, "mainapp/ticket.html", context)
 
 
-
-
 class Alumnos(TemplateView):
-
 
     def get(self, request):
         context = {}
@@ -234,8 +242,6 @@ class Alumnos(TemplateView):
         context['menu'] = MENU_ADMIN
 
         return render(request, "mainapp/alumnos.html", context)
-
-
 
 
 class Index(TemplateView):
@@ -308,9 +314,9 @@ class Escuela(TemplateView):
         context['escuela'] = School.objects.first()
         context['cuota_form'] = CUOTA_FIELDS
         context['author'] =  configurar
+        context['producto_form'] = PRODUCT_FIELDS
+        context['products'] = Producto.objects.all()
         return render(request, "mainapp/escuela.html", context)
-
-
 
 
 class AddCuota(TemplateView):
@@ -333,6 +339,22 @@ class AddCuota(TemplateView):
         return JsonResponse({'callback':'callback_escuela'}, safe=False)
 
 
+class AddProducto(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        producto = Producto(
+            product_name=data.get('product_name'),
+            sizes=data.get('sizes'),
+            price=data.get('price'),
+            grade=data.getlist('grado'),
+        )
+        producto.save()
+
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
+
+
 class ListPago(TemplateView):
 
     def post(self, request):
@@ -345,7 +367,6 @@ class ListPago(TemplateView):
         today = datetime.now()
         context['weeks'] = Week.objects.filter(status=True, inicio__get=today,fin__lte=today)
         return render(request, "mainapp/pagos.html", context)
-
 
 
 class CuotaActions(TemplateView):
@@ -361,13 +382,27 @@ class CuotaActions(TemplateView):
         return render(request, "mainapp/pagos.html", context)
 
 
+class ProductoActions(TemplateView):
+
+    def post(self, request):
+        data = request.POST.copy()
+        del data['csrfmiddlewaretoken']
+        return JsonResponse({'callback':'callback_escuela'}, safe=False)
+
+    def get(self, request, id=None):
+        context = {}
+        c = Producto.objects.get(id=id).delete()
+        return JsonResponse({'callbacks':'callback_escuela'}, safe=False)
+
+
 
 class Dashboard(TemplateView):
 
 
     def get(self, request, cuota=None):
         context = {}
-        weeks = Week.objects.filter(status=True)
+        curr_week = WeekOperations.curr_week(self).week
+        weeks = Week.objects.filter(status=True, week__lte=curr_week)
         alumnos = Alumno.objects.values('grado').annotate(dcount=Count('grado'))
         context['weeks'] = weeks
         context['menu'] = MENU_ADMIN

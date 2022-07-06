@@ -136,9 +136,13 @@
           {% include "mainapp/weeks.html" %}
         </div>
 
-      </form>
+    </form>
 
-
+    <hr class="my-4">
+    <div class="py-5 text-center">
+      <h2>Productos </h2>
+    </div>
+    {% include 'mainapp/producto.html'%}
     
  
 {% endblock %}
@@ -167,7 +171,7 @@
           }
       }); 
 
-      $('.remove').click(function(element){
+    $('.remove').click(function(element){
       element.preventDefault();
       var id = $(this).attr('data-id');
       var elemental = $(this);
@@ -185,7 +189,26 @@
           }
         });
       }
+    });
 
+    $('.remove_product').click(function(element){
+      element.preventDefault();
+      var id = $(this).attr('data-id');
+      var elemental = $(this);
+      if(confirm('Desea eliminar este producto')){
+        $('.toaster,.loader').show();
+        $('#msg_toast').html('Eliminando producto');
+        $.ajax({
+          url:'/rmproducto/'+id+'/',
+          type:'get',
+          success:function(response){
+            elemental.parents('.col:first').remove();
+            $('.loader').hide();
+            $('#msg_toast').html('Se eliminó con éxito :)');
+            $('.toaster').delay(2000).hide('slow');
+          }
+        });
+      }
     });
 
 

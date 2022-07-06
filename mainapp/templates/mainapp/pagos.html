@@ -1,6 +1,6 @@
-<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+<div class="row g-5 text-center">
   {% for p in pagos %}
-        <div class="col">
+        <div class="col-sm-6 col-6 col-md-6">
           <div class="card mb-4 rounded-3 shadow-sm">
             <div class="card-header py-3">
               <h4 class="my-0 fw-normal">Semana {{p.week}}</h4>
@@ -21,7 +21,7 @@
                         value="{{c.id}}" 
                         quota="{{c.nuevomonto}}" 
                         class="form-check-input"
-                        ng-click="addPago('{{c.id}}', '{{c.name}} semana {{c.week.week}}','{{c.nuevomonto}}','{{recargos}}')">
+                  >
                   {% endif %}
                   <label>{{c.name}}</label>
                   {% if c.nuevomonto > c.monto %}
