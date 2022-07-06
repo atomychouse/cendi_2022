@@ -37,7 +37,6 @@ class Week(models.Model):
             total = c.pago_set.aggregate(Sum('recargos'))['recargos__sum']
             if total:
                 pagos = pagos + total
-            #assert False, c.pago_set.aggregate(Sum('monto_original'))
         return pagos
 
 

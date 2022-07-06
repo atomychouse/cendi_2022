@@ -101,6 +101,8 @@ class Inscripcion(TemplateView, WeekOperations):
             c.save()
         else:
             saved = forma.errors.as_json()
+            return JsonResponse({'errors':saved}, safe=False)
+
         return JsonResponse({'callback':'callback_inscripcion'}, safe=False)
 
     def get(self, request):
@@ -117,11 +119,13 @@ class Inscripcion(TemplateView, WeekOperations):
 
 class Home(TemplateView):
 
-    def recargos(self,cuotas,today):
+    def recargos(self, cuotas, today, alumno):
         for c in cuotas:
-            if c.pago_set.all().exists():
+            pago_hecho = c.pago_set.filter(alumno_id=alumno)
+            if pago_hecho.exists():
                 semanas_retraso = 0
                 c.pagado = True
+                c.fecha_pago = pago_hecho.first()
             else:
                 semanas_retraso = (today - c.week.fin).days  // 7
                 c.pagado = False
@@ -153,7 +157,7 @@ class Home(TemplateView):
                 'week':w.week,
                 'inicio':w.inicio,
                 'fin':w.fin,
-                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id)), today)
+                'cuotas':self.recargos(w.cuota_set.filter(Q(aplica__icontains=a.grado)|Q(aplica=a.id)), today, a.id)
             } for w in weeks]
             
             context['pagos'] = weeksarr
@@ -178,10 +182,6 @@ class Pagos(TemplateView):
 
     def get(self, request):
         context = {}
-        self.alumno=alumno
-        self.week=WeekOperations.curr_week(self)
-        self.ticket=ticket
-
         return render(request, "mainapp/ticket.html", context)
 
 
@@ -190,8 +190,8 @@ class Pagos(TemplateView):
         today = date.today() + timedelta(days=7)
         data = request.POST.copy()
         cuotas = Cuota.objects.filter(id__in=data.getlist('cuota'))
-        cobrando = Home.recargos(self, cuotas=cuotas, today=today)
         alumno = Alumno.objects.get(id=data.get('alumno'))
+        cobrando = Home.recargos(self, cuotas=cuotas, today=today, alumno=alumno.id)
         pagos_arr = []
         for c in cobrando:
             pago,fails = Pago.objects.get_or_create(alumno_id=data.get('alumno'), cuota=c)

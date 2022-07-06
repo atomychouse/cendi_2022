@@ -14,47 +14,49 @@
           {{alumno.nombre}} {{alumno.apellidos}}
           <br>
           {{alumno.grado}}
+          <br>
+          Inscrito: {{alumno.date_create}}
       </p>
     </div>
-    <h4 style="text-align: center;">Semana {{week.week}} {{week.inicio}} al {{week.fin}}</h4>
+    <h4 style="text-align: center;">Semana {{week.week}} <br>{{week.inicio}} al {{week.fin}}</h4>
     <hr class="my-4">
 
     <div class="row g-5">
       <div class="col-md-12 col-lg-12">
         {% if pagos %}
-          <form id="pagos" class="needs-validation" novalidate  method="post" action="/pagos/">
+          <form id="pagos_form" class="needs-validation" novalidate  method="post" action="/pagos/">
             {% csrf_token %}
             <input type="hidden" name="alumno" value="{{alumno.id}}">
             {% include 'mainapp/pagos.html'%}
           </form>
         {% else %}
-        <form class="needs-validation" novalidate  method="post" action="/">
-          {% csrf_token %}
-          <div class="row g-3">
-            {% for f in fields %}
-            <div class="col-sm-{{f.size}}">
-              <label for="firstName" class="form-label">{{f.label}}</label>
-              {% if 'input' in f.type %}
-              <input type="text" class="form-control"
-                     placeholder="{{f.ph}}" 
-                     value="{{f.preload}}"
-                     name="{{f.name}}" {{f.required}}>
+          <form class="needs-validation" novalidate  method="post" action="/">
+            {% csrf_token %}
+            <div class="row g-3">
+              {% for f in fields %}
+              <div class="col-sm-{{f.size}}">
+                <label for="firstName" class="form-label">{{f.label}}</label>
+                {% if 'input' in f.type %}
+                <input type="text" class="form-control"
+                      placeholder="{{f.ph}}" 
+                      value="{{f.preload}}"
+                      name="{{f.name}}" {{f.required}}>
 
-              {% elif 'select' in f.type %}
-                <select name="{{f.name}}" class="form-control" {{f.required}}>
-                  {% for o in f.options %}
-                    <option value="{{o.0}}">{{o.1}}</option>
-                  {% endfor %}
-                </select>
-              {% endif %}
-              <div class="invalid-feedback">
-                Dato requerido
+                {% elif 'select' in f.type %}
+                  <select name="{{f.name}}" class="form-control" {{f.required}}>
+                    {% for o in f.options %}
+                      <option value="{{o.0}}">{{o.1}}</option>
+                    {% endfor %}
+                  </select>
+                {% endif %}
+                <div class="invalid-feedback">
+                  Dato requerido
+                </div>
               </div>
-            </div>
-            {% endfor %}
-            <hr class="my-4">
-          <button class="w-50 btn btn-primary btn-lg" type="submit">Continue</button>
-        </form>
+              {% endfor %}
+              <hr class="my-4">
+            <button class="w-50 btn btn-primary btn-lg" type="button">Continue</button>
+          </form>
         {% endif %}
       </div>
     </div>
@@ -63,22 +65,15 @@
 
 
 {% block extrajs %}
-  <script type="text/javascript">
-    var myapp = angular.module('mainApp',['ngRoute']);
-    var customInterpolationApp = angular.module('customInterpolationApp', []);
-    myapp.config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('||');
-        $interpolateProvider.endSymbol('||');
-
-    });
-    myapp.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-        $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';        
-    }]);
-
-</script>
-
-
   <script src="/static/mainapp/js/home.js"></script>
+  <script>
+    $(document).ready(function(){
+      $('#irpago').click(function(){
+        if(confirm('Desea realizar el pago?')){
+          $('#pagos_form').submit();
+        }
+
+      });
+    });
+  </script>
 {% endblock %}

@@ -60,6 +60,26 @@
     display: none;
   }
 
+  .activo{
+   border-bottom: 5px solid #2df07e;
+   padding: 10px 0px;
+  }
+
+  .adeudo{
+    border-bottom: 5px solid #eb4f34;
+    padding: 10px 0px;
+    background-color: red;
+    color:#fff;
+    padding:10px;
+    border-radius: 10px;
+    margin: 10px 0px;
+   }
+ 
+  .pagado{
+    text-decoration: line-through;
+    color:#999;
+  }
+
 
 .loader,
 .loader:after {
